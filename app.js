@@ -14,6 +14,7 @@ const chess = new Chess();
 
 let players = {};
 let currentPlayer = "w";
+let connectedPlayers = 0;
 
 app.set("view engine", "ejs");
 app.use(express.static(path.join(__dirname, "public")));
@@ -36,6 +37,7 @@ io.on("connection", function (uniquesocket) {
   }
 
   uniquesocket.on("disconnect", function () {
+    console.log("a user disconnected");
     if (uniquesocket.id === players.white) {
       delete players.white;
     } else if (uniquesocket.id === players.black) {
@@ -55,11 +57,11 @@ io.on("connection", function (uniquesocket) {
         io.emit("boadState", chess.fen());
       } else {
         console.log("invalid move", move);
-        uniquesocket.emit("invalidMove", move);
+        uniquesocket.emit("invalidMove1", move);
       }
     } catch (err) {
       console.log(err);
-      uniquesocket.emit("invalidMove ", move);
+      uniquesocket.emit("invalidMove", move);
     }
   });
 });
