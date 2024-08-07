@@ -67,14 +67,14 @@ const renderBoard = () => {
   if (playerRole === "b") {
     boardElement.classList.add("flipped");
   } else {
-    boardElement.classList.rmeove("flipped");
+    boardElement.classList.remove("flipped");
   }
 };
 
-const handleMove = () => {
-  constmove = {
-    from: "${String.fromCharCode(source.col + 97)}${8-source.row}",
-    to: "${String.fromCharCode(target.col + 97)}${8-target.row}",
+const handleMove = (source, target) => {
+  const move = {
+    from: String.fromCharCode(97 + source.col) + (8 - source.row),
+    to: String.fromCharCode(97 + target.col) + (8 - target.row),
     promotion: "q",
   };
   socket.emit("move", move);
@@ -82,13 +82,13 @@ const handleMove = () => {
 
 const getPieceUnicode = (piece) => {
   const unicodePieces = {
-    p: "♟",
+    p: "\u2659",
     n: "♞",
     b: "♝",
     r: "♜",
     q: "♛",
     k: "♚",
-    P: "♙",
+    P: "\u2659",
     N: "♘",
     B: "♗",
     R: "♖",
@@ -107,6 +107,14 @@ socket.on("playerRole", function (role) {
 socket.on("spectatorRole", function () {
   playerRole = null;
   renderBoard();
+});
+
+socket.on("invalidMove", function (move) {
+  alert("Invalid move ");
+});
+
+socket.on("gameOver", function (winner) {
+  alert("Game over! " + winner + " wins!");
 });
 
 socket.on("boardState", function (fen) {
